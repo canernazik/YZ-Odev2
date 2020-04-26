@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 class child:
 
@@ -58,7 +59,8 @@ def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığ�
     fit=0
     i=1
     j=1
-    while (maze[i][j] != 1):
+    k=0
+    while (maze[i][j] != 1 and (i!=len(maze)-2 or j!=len(maze)-2) and k < 40):
         maze[i][j] = 1 ## Daha onceden  geldigi yere tekrar gelmesin diye sanki burada engel varmıs gibi gosteriliyor.
         if (person.path[k] == 1):
             j=j-1
@@ -69,11 +71,34 @@ def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığ�
         elif (person.path[k] == 4):
             i=i+1
         fit = fit+1
+        k=k+1
+    if (i==len(maze)-2 and j==len(maze)-2):
+        fit=fit+100000
+
     return fit
 
 # Jenerasyon sayısı önemli yani kaç tane jenerasyon yaratılacak yani döngü sayısı bir nevi
 population = []
 roulette = []
 createPopulation(population,100)
-population = nextGen(population,roulette,100)
+copymaze = []
+maze = [[1,1,1,1,1,1,1,1],
+        [1,0,0,1,1,1,0,1],
+        [1,0,1,1,0,1,0,1],
+        [1,0,1,1,0,1,0,1],
+        [1,0,0,0,0,0,0,1],
+        [1,1,1,0,0,1,0,1],
+        [1,1,1,1,1,1,0,1],
+        [1,1,1,1,1,1,1,1]]
+while (population[0].fit < 100000):
+    for x in (population):
+        copymaze = copy.deepcopy(maze)
+        x.fit=findFit(x,copymaze)
+    population.sort(key=lambda x: x.fit,reverse=True)
+    population=nextGen(population,roulette,100)
+    print(population[0].fit)
+
+print(population[0].path)
+
+
 
