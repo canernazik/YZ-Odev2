@@ -1,5 +1,7 @@
 import numpy as np
 import copy
+from PIL import Image
+import scipy.misc
 
 class child:
 
@@ -77,17 +79,50 @@ def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığ�
 
     return fit
 
+def printBest(person,maze):
+    img = np.zeros((len(maze), len(maze), 3), dtype=np.uint8)
+    i = 1
+    j = 1
+    img=[[0 for y in range(len(maze))] for x in range(len(maze))]
+    for x in range(person.fit-100000):
+        maze[i][j] = 2
+        if (person.path[x] == 1):
+            j=j-1
+        elif (person.path[x] == 2):
+            i=i-1
+        elif (person.path[x] == 3):
+            j=j+1
+        elif (person.path[x] == 4):
+            i=i+1
+    for x in range(len(maze)-1):
+        for y in range(len(maze)-1):
+            if (maze[x][y]==0):
+                img[x][y][0]=255
+                img[x][y][1] = 255
+                img[x][y][2] = 255
+
+            elif (maze[x][y]==1):
+                img[x][y][0]=0
+                img[x][y][1] = 0
+                img[x][y][2] = 0
+            elif (maze[x][y]==2):
+                img[x][y][0]=100
+                img[x][y][1] = 100
+                img[x][y][2] = 100
+    return  img
+
+
 # Jenerasyon sayısı önemli yani kaç tane jenerasyon yaratılacak yani döngü sayısı bir nevi
 population = []
 roulette = []
 createPopulation(population,100)
 copymaze = []
 maze = [[1,1,1,1,1,1,1,1],
-        [1,0,0,1,1,1,0,1],
-        [1,0,1,1,0,1,0,1],
-        [1,0,1,1,0,1,0,1],
+        [1,0,0,1,1,1,1,1],
+        [1,0,1,1,0,0,0,1],
+        [1,0,1,1,0,0,0,1],
         [1,0,0,0,0,0,0,1],
-        [1,1,1,0,0,1,0,1],
+        [1,1,1,0,0,0,0,1],
         [1,1,1,1,1,1,0,1],
         [1,1,1,1,1,1,1,1]]
 while (population[0].fit < 100000):
@@ -99,6 +134,10 @@ while (population[0].fit < 100000):
     print(population[0].fit)
 
 print(population[0].path)
+copymaze = copy.deepcopy(maze)
+data = printBest(population[0],copymaze)
+scipy.misc.imshow(img)
+
 
 
 
