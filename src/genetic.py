@@ -20,7 +20,6 @@ def createRoulette(population,roulette,pop):
 
     return roulette
 
-
 #öncesinde fite göre sort at
 def nextGen(population,roulette,pop):  #yeni jenerasyonu bulma fonksiyonu
     newGen = []
@@ -60,17 +59,19 @@ def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığ�
     i=1
     j=1
     while (maze[i][j] != 1):
+        maze[i][j] = 1 ## Daha onceden  geldigi yere tekrar gelmesin diye sanki burada engel varmıs gibi gosteriliyor.
         if (person.path[k] == 1):
             j=j-1
-        if (person.path[k] == 2):
+        elif (person.path[k] == 2):
             i=i-1
-        if (person.path[k] == 3):
+        elif (person.path[k] == 3):
             j=j+1
-        if (person.path[k] == 4):
+        elif (person.path[k] == 4):
             i=i+1
         fit = fit+1
     return fit
 
+# Jenerasyon sayısı önemli yani kaç tane jenerasyon yaratılacak yani döngü sayısı bir nevi
 population = []
 roulette = []
 createPopulation(population,100)
