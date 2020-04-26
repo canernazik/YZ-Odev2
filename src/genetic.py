@@ -83,7 +83,6 @@ def printBest(person,maze):
     img = np.zeros((len(maze), len(maze), 3), dtype=np.uint8)
     i = 1
     j = 1
-    img=[[0 for y in range(len(maze))] for x in range(len(maze))]
     for x in range(person.fit-100000):
         maze[i][j] = 2
         if (person.path[x] == 1):
@@ -97,18 +96,12 @@ def printBest(person,maze):
     for x in range(len(maze)-1):
         for y in range(len(maze)-1):
             if (maze[x][y]==0):
-                img[x][y][0]=255
-                img[x][y][1] = 255
-                img[x][y][2] = 255
+                img[x][y]=[255,255,255]
 
             elif (maze[x][y]==1):
-                img[x][y][0]=0
-                img[x][y][1] = 0
-                img[x][y][2] = 0
+                img[x][y]=[0,0,0]
             elif (maze[x][y]==2):
-                img[x][y][0]=100
-                img[x][y][1] = 100
-                img[x][y][2] = 100
+                img[x][y] = [100, 100, 100]
     return  img
 
 
@@ -136,7 +129,8 @@ while (population[0].fit < 100000):
 print(population[0].path)
 copymaze = copy.deepcopy(maze)
 data = printBest(population[0],copymaze)
-scipy.misc.imshow(img)
+img = Image.fromarray(data, 'RGB')
+img.show()
 
 
 
