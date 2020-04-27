@@ -110,14 +110,16 @@ population = []
 roulette = []
 createPopulation(population,100)
 copymaze = []
-maze = [[1,1,1,1,1,1,1,1],
+maze = [
+        [1,1,1,1,1,1,1,1],
         [1,0,0,1,1,1,1,1],
         [1,0,1,1,0,0,0,1],
         [1,0,1,1,0,0,0,1],
         [1,0,0,0,0,0,0,1],
         [1,1,1,0,0,0,0,1],
         [1,1,1,1,1,1,0,1],
-        [1,1,1,1,1,1,1,1]]
+        [1,1,1,1,1,1,1,1]
+        ]
 while (population[0].fit < 100000):
     for x in (population):
         copymaze = copy.deepcopy(maze)
@@ -132,6 +134,49 @@ data = printBest(population[0],copymaze)
 img = Image.fromarray(data, 'RGB')
 img.show()
 
+import matplotlib.pyplot as plt
+from matplotlib import colors
 
+data = copy.deepcopy(maze)
+data[1][1] = 8
+data[len(data)-2][len(data[0])-2] = 8
 
+chromosome = population[0].path
+lenght = population[0].fit - 100000
 
+k = 0
+i,j = 1,1
+
+while (i != len(data)-2 or j != len(data[0])-2):
+    if chromosome[k] == 1:
+        j = j - 1
+    elif chromosome[k] == 2:
+        i = i - 1
+    elif chromosome[k] == 3:
+        j = j + 1
+    else:
+        i = i + 1
+
+    data[i][j] = 15
+    k = k + 1
+
+data[1][1] = 8
+data[len(data)-2][len(data[0])-2] = 8
+
+# create discrete colormap
+cmap = colors.ListedColormap(['white', 'red', 'green', 'orange'])
+bounds = [0,0.9, 5, 10, 20]
+norm = colors.BoundaryNorm(bounds, cmap.N)
+
+fig, ax = plt.subplots()
+ax.imshow(data, cmap=cmap, norm=norm)
+
+# draw gridlines
+ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
+ax.set_xticks(np.arange(-.5, len(maze), 1));
+ax.set_yticks(np.arange(-.5, len(maze), 1));
+
+plt.setp(ax.get_xticklabels(), visible=False)
+plt.setp(ax.get_yticklabels(), visible=False)
+
+plt.show()
