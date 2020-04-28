@@ -1,7 +1,8 @@
 import numpy as np
 import copy
-from PIL import Image
-import scipy.misc
+import matplotlib.pyplot as plt
+from matplotlib import colors
+
 
 class child:
 
@@ -131,11 +132,6 @@ while (population[0].fit < 100000):
 print(population[0].path)
 copymaze = copy.deepcopy(maze)
 data = printBest(population[0],copymaze)
-img = Image.fromarray(data, 'RGB')
-img.show()
-
-import matplotlib.pyplot as plt
-from matplotlib import colors
 
 data = copy.deepcopy(maze)
 data[1][1] = 8
@@ -180,3 +176,7 @@ plt.setp(ax.get_xticklabels(), visible=False)
 plt.setp(ax.get_yticklabels(), visible=False)
 
 plt.show()
+
+file_path = "path/to/file" + "_".join(chromosome) + ".png"
+
+fig.savefig(file_path)
