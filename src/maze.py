@@ -14,9 +14,6 @@ class Maze:
         self.__matrix[1][1] = 8
         self.__matrix[self.__row_count - 2][self.__column_count - 2] = 8
 
-        #Todo: Should add the obstacles
-        #2 types of obstacles should exist. Vertical or Horizontal.
-        #todo: move right, left up, down da eklenmeli
 
     def __fill_edges(self):
         for i in [0 , self.__row_count - 1]:
@@ -33,9 +30,6 @@ class Maze:
             self.__generate_obstacle(4)
 
     def __generate_obstacle(self, obstacle_length):
-        ## Todo: Buraya su kontrol eklenmeli. Obstacle eklenirken ya da en sonunda olusturuldugunda baslangictan bitise gidilebiliyor mu
-        ## todo: bunun kontrolunun eklenmesi gerekiyor
-        
         can_place_obstacle = False
 
         while can_place_obstacle == False:
@@ -53,7 +47,6 @@ class Maze:
     
     def __generate_direction(self):
         i = random.randint(0,1)
-        #print("Direction: " + self.__obstacle_direction[i])
         return self.__obstacle_direction[i]
 
     def __generate_starting_point(self, direction):        
@@ -95,35 +88,4 @@ class Maze:
             print(''.join(str(x) for x in self.__matrix[i]))
     
     def get_matrix(self):
-        return self.__matrix
-
-
-import matplotlib.pyplot as plt
-from matplotlib import colors
-import numpy as np
-
-maze = Maze(20, 100, 100)
-
-maze.print_matrix()
-matrix = maze.get_matrix()
-
-
-# create discrete colormap
-cmap = colors.ListedColormap(['white', 'red', 'green'])
-bounds = [0,0.9, 5, 10]
-norm = colors.BoundaryNorm(bounds, cmap.N)
-
-fig, ax = plt.subplots(figsize=(25,25))
-ax.imshow(matrix, cmap=cmap, norm=norm)
-
-# draw gridlines
-ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
-ax.set_xticks(np.arange(-.5, len(matrix), 1));
-ax.set_yticks(np.arange(-.5, len(matrix), 1));
-
-
-plt.setp(ax.get_xticklabels(), visible=False)
-plt.setp(ax.get_yticklabels(), visible=False)
-
-plt.show()
-     
+        return self.__matrix     

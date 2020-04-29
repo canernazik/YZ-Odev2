@@ -10,28 +10,27 @@ class child:
     def __init__(self,fit,path):
         self.fit=fit
         self.path = path
-#pop = yaratacağımız popülasyonun sayısı
-def createPopulation(population,pop):
-    for x in range(pop):
-        population.append(child(0,np.random.randint(1,5,100))) #fit fonksiyonuna göre fit sayısı
+        
+def createPopulation(population, size):
+    for x in range(size):
+        population.append(child(0,np.random.randint(1,5,100)))
 
     return population
 
 
 def createRoulette(population,roulette,pop):
     for x in range(pop):
-        for y in range(population[x].fit): #range'nin içi population[x].fit olacak fit değeri en başta 0 olduğu için şimdilik hata veriyor findFit fonksiyonunu kullakdıktan sonra çalışır
+        for y in range(population[x].fit):
             roulette.append(x)
 
     return roulette
 
-#öncesinde fite göre sort at
-def nextGen(population,roulette,pop):  #yeni jenerasyonu bulma fonksiyonu
+def nextGen(population,roulette,population_size):  #yeni jenerasyonu bulma fonksiyonu
     newGen = []
-    roulette = createRoulette(population,roulette,pop)
-    for x in range(int(pop/2)):
+    roulette = createRoulette(population,roulette,population_size)
+    for x in range(int(population_size/2)):
         newGen.append(population[x])
-    for x in range(int(pop/4)):
+    for x in range(int(population_size/4)):
 
         random1 = roulette[np.random.randint(0,len(roulette))]
         random2 = roulette[np.random.randint(0,len(roulette))]
@@ -45,13 +44,13 @@ def nextGen(population,roulette,pop):  #yeni jenerasyonu bulma fonksiyonu
         newPerson = crossover(random2,random1,randomGen,population)
         newGen.append(newPerson)
     
-    for x in range(int(pop/10)):
-        mut = np.random.randint(0,pop)
+    for x in range(int(population_size/10)):
+        mut = np.random.randint(0,population_size)
         mutation(newGen[mut])
                                 
     return newGen
 
-def crossover(random1,random2,randomGen,population):        #crossover fonksiyonu
+def crossover(random1,random2,randomGen,population):
     path = []
     for x in range(randomGen):
         path.append(population[random1].path[x])
@@ -60,12 +59,13 @@ def crossover(random1,random2,randomGen,population):        #crossover fonksiyon
     newPerson = child(0,path)
     return newPerson
 
-def mutation(person):       #mutasyon fonksiyonu
+def mutation(person):
     random1 = np.random.randint(0, 100)
     random2 = np.random.randint(0, 100)
     person.path[random1], person.path[random2] = person.path[random2], person.path[random1]
 
-"""def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığı için kontrol edemedim doğruluğu
+""" alternatif fit fonksiyonu
+def findFit(person,maze):
     fit=0
     i=1
     j=1
@@ -87,7 +87,7 @@ def mutation(person):       #mutasyon fonksiyonu
 
     return fit """
 
-def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığı için kontrol edemedim doğruluğu
+def findFit(person,maze):
     fit=0
     i=1
     j=1
@@ -135,11 +135,10 @@ def printBest(person,maze):
     return  img
 
 
-# Jenerasyon sayısı önemli yani kaç tane jenerasyon yaratılacak yani döngü sayısı bir nevi
-pop=200
+population_size=200
 population = []
 roulette = []
-createPopulation(population,pop)
+createPopulation(population,population_size)
 copymaze = []
 counter = 1
 
@@ -150,13 +149,14 @@ while (population[0].fit < 100000):
         copymaze = copy.deepcopy(maze)
         x.fit=findFit(x,copymaze)
     population.sort(key=lambda x: x.fit, reverse=True)
-    population=nextGen(population,roulette,pop)
+    population=nextGen(population,roulette,population_size)
     
     
     data = copy.deepcopy(maze)
     chromosome = population[0].path
     fit = population[0].fit
     
+    """ Video çekerken kullanıldı
     k = 0
     i,j = 1,1
     
@@ -181,6 +181,7 @@ while (population[0].fit < 100000):
     data[len(data)-2][len(data[0])-2] = 8
     
     
+    
     cmap = colors.ListedColormap(['white', 'red', 'green', 'orange'])
     bounds = [0,0.9, 5, 10, 20]
     norm = colors.BoundaryNorm(bounds, cmap.N)
@@ -201,6 +202,7 @@ while (population[0].fit < 100000):
     path = "4/gen_" + str(counter) + ".png"
     
     fig.savefig(path)
+    """
     
     counter = counter +1
     print(population[0].fit)
@@ -242,7 +244,7 @@ cmap = colors.ListedColormap(['white', 'red', 'green', 'orange'])
 bounds = [0,0.9, 5, 10, 20]
 norm = colors.BoundaryNorm(bounds, cmap.N)
 
-fig, ax = plt.subplots(figsize=(25,25))
+fig, ax = plt.subplots(figsize=(8,9))
 ax.imshow(data, cmap=cmap, norm=norm)
 
 # draw gridlines
