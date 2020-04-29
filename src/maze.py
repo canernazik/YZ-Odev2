@@ -106,7 +106,7 @@ import matplotlib.pyplot as plt
 from matplotlib import colors
 import numpy as np
 
-maze = Maze(100, 100, 100)
+"""maze = Maze(20, 100, 100)
 
 maze.print_matrix()
 matrix = maze.get_matrix()
@@ -129,6 +129,6 @@ ax.set_yticks(np.arange(-.5, len(matrix), 1));
 plt.setp(ax.get_xticklabels(), visible=False)
 plt.setp(ax.get_yticklabels(), visible=False)
 
-plt.show()
+plt.show() """
    
      

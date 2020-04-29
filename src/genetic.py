@@ -2,7 +2,7 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plt
 from matplotlib import colors
-
+from maze import Maze
 
 class child:
 
@@ -43,7 +43,7 @@ def nextGen(population,roulette,pop):  #yeni jenerasyonu bulma fonksiyonu
         newPerson = crossover(random2,random1,randomGen,population)
         newGen.append(newPerson)
     for x in range(int(pop/10)):
-        mut = np.random.randint(int(pop/2),pop)
+        mut = np.random.randint(0,pop)
         mutation(newGen[mut])
     return newGen
 
@@ -61,7 +61,7 @@ def mutation(person):       #mutasyon fonksiyonu
     random2 = np.random.randint(0, 300)
     person.path[random1], person.path[random2] = person.path[random2], person.path[random1]
 
-def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığı için kontrol edemedim doğruluğu
+"""def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığı için kontrol edemedim doğruluğu
     fit=0
     i=1
     j=1
@@ -81,9 +81,9 @@ def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığ�
     if (i==len(maze)-2 and j==len(maze)-2):
         fit=fit+100000
 
-    return fit
+    return fit """
 
-"""def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığı için kontrol edemedim doğruluğu
+def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığı için kontrol edemedim doğruluğu
     fit=0
     i=1
     j=1
@@ -99,9 +99,11 @@ def findFit(person,maze):       #fit değerini bulma fonksiyonu (maze olmadığ�
         elif (person.path[k] == 4):
             i=i+1
         k=k+1
-    fit = (len(maze)-i-2)+(len(maze)-j-2)
+    fit = i+j
+    if (i==len(maze)-2 and j==len(maze)-2):
+        fit=fit+100000
 
-    return fit """
+    return fit
 
 def printBest(person,maze):
     img = np.zeros((len(maze), len(maze), 3), dtype=np.uint8)
@@ -130,13 +132,13 @@ def printBest(person,maze):
 
 
 # Jenerasyon sayısı önemli yani kaç tane jenerasyon yaratılacak yani döngü sayısı bir nevi
-pop=100
+pop=200
 population = []
 roulette = []
 createPopulation(population,pop)
 copymaze = []
 counter = 1
-maze = [
+"""maze = [
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
         [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
@@ -156,8 +158,9 @@ maze = [
         [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
         [1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-        ]
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] 
+        ]"""
+maze = Maze(20, 20, 10).get_matrix()
 while (population[0].fit < 100000):
     for x in (population):
         copymaze = copy.deepcopy(maze)
@@ -203,8 +206,7 @@ data[len(data)-2][len(data[0])-2] = 8
 cmap = colors.ListedColormap(['white', 'red', 'green', 'orange'])
 bounds = [0,0.9, 5, 10, 20]
 norm = colors.BoundaryNorm(bounds, cmap.N)
-
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(25,25))
 ax.imshow(data, cmap=cmap, norm=norm)
 
 # draw gridlines
