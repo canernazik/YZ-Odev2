@@ -43,7 +43,7 @@ def nextGen(population,roulette,pop):  #yeni jenerasyonu bulma fonksiyonu
         newPerson = crossover(random2,random1,randomGen,population)
         newGen.append(newPerson)
     for x in range(int(pop/10)):
-        mut = np.random.randint(int(pop/2),pop)
+        mut = np.random.randint(0,pop)
         mutation(newGen[mut])
     return newGen
 
