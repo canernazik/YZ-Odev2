@@ -6,14 +6,16 @@ from maze import Maze
 
 
 class child:
-
     def __init__(self,fit,path):
         self.fit=fit
         self.path = path
+
+
+chromosome_length = 100
         
 def createPopulation(population, size):
     for x in range(size):
-        population.append(child(0,np.random.randint(1,5,100)))
+        population.append(child(0,np.random.randint(1,5,chromosome_length)))
 
     return population
 
@@ -25,23 +27,28 @@ def createRoulette(population,roulette,pop):
 
     return roulette
 
-def nextGen(population,roulette,population_size):  #yeni jenerasyonu bulma fonksiyonu
+def nextGen(population,roulette,population_size):
     newGen = []
     roulette = createRoulette(population,roulette,population_size)
     for x in range(int(population_size/2)):
         newGen.append(population[x])
     for x in range(int(population_size/4)):
 
-        random1 = roulette[np.random.randint(0,len(roulette))]
-        random2 = roulette[np.random.randint(0,len(roulette))]
-        #randomGen = np.random.randint(0,300)
-        randomGen = population[random1].fit
+        parent_1 = roulette[np.random.randint(0,len(roulette))]
+        parent_2 = roulette[np.random.randint(0,len(roulette))]
+        
+        # Duvara carpana kadar olan gen alındı
+        randomGen = population[parent_1].fit
+        
         if (randomGen > 100000):
             randomGen=randomGen-100000
         
-        newPerson = crossover(random1,random2,randomGen,population)
+        # child - 1
+        newPerson = crossover(parent_1,parent_2,randomGen,population)
         newGen.append(newPerson)
-        newPerson = crossover(random2,random1,randomGen,population)
+        
+        #Child - 2
+        newPerson = crossover(parent_2,parent_1,randomGen,population)
         newGen.append(newPerson)
     
     for x in range(int(population_size/10)):
@@ -50,19 +57,25 @@ def nextGen(population,roulette,population_size):  #yeni jenerasyonu bulma fonks
                                 
     return newGen
 
-def crossover(random1,random2,randomGen,population):
+
+def crossover(parent_1,parent_2,randomGen,population):
     path = []
+    
     for x in range(randomGen):
-        path.append(population[random1].path[x])
-    for x in range(randomGen,100):
-        path.append(population[random2].path[x])
+        path.append(population[parent_1].path[x])
+    
+    for x in range(randomGen,chromosome_length):
+        path.append(population[parent_2].path[x])
+    
     newPerson = child(0,path)
+    
     return newPerson
 
 def mutation(person):
-    random1 = np.random.randint(0, 100)
-    random2 = np.random.randint(0, 100)
-    person.path[random1], person.path[random2] = person.path[random2], person.path[random1]
+    gen_position_1 = np.random.randint(0, chromosome_length)
+    gen_position_2 = np.random.randint(0, chromosome_length)
+    person.path[gen_position_1], person.path[gen_position_2] = person.path[gen_position_2], person.path[gen_position_1]
+
 
 """ alternatif fit fonksiyonu
 def findFit(person,maze):
@@ -92,7 +105,7 @@ def findFit(person,maze):
     i=1
     j=1
     k=0
-    while (maze[i][j] != 1 and (i!=len(maze)-2 or j!=len(maze)-2) and k < 300):
+    while (maze[i][j] != 1 and (i!=len(maze)-2 or j!=len(maze)-2) and k < chromosome_length):
         maze[i][j] = 1 ## Daha onceden  geldigi yere tekrar gelmesin diye sanki burada engel varmıs gibi gosteriliyor.
         if (person.path[k] == 1):
             j=j-1
@@ -108,31 +121,6 @@ def findFit(person,maze):
         fit=fit+100000
 
     return fit
-
-def printBest(person,maze):
-    img = np.zeros((len(maze), len(maze), 3), dtype=np.uint8)
-    i = 1
-    j = 1
-    for x in range(person.fit-100000):
-        maze[i][j] = 2
-        if (person.path[x] == 1):
-            j=j-1
-        elif (person.path[x] == 2):
-            i=i-1
-        elif (person.path[x] == 3):
-            j=j+1
-        elif (person.path[x] == 4):
-            i=i+1
-    for x in range(len(maze)-1):
-        for y in range(len(maze)-1):
-            if (maze[x][y]==0):
-                img[x][y]=[255,255,255]
-
-            elif (maze[x][y]==1):
-                img[x][y]=[0,0,0]
-            elif (maze[x][y]==2):
-                img[x][y] = [100, 100, 100]
-    return  img
 
 
 population_size=200
@@ -212,7 +200,6 @@ print(population[0].path)
 print(population[0].fit-100000)
 print(counter)
 copymaze = copy.deepcopy(maze)
-data = printBest(population[0],copymaze)
 
 data = copy.deepcopy(maze)
 data[1][1] = 8
@@ -239,7 +226,8 @@ while (i != len(data)-2 or j != len(data[0])-2 ) and (k < len(chromosome)):
 data[1][1] = 8
 data[len(data)-2][len(data[0])-2] = 8
 
-# create discrete colormap
+# 0 - 0.9 değerleri arası beyaz, 0.9-5 arası kırmızı, 5-10 yesil, 10-20 yesil
+# olarak matriste gosterilir
 cmap = colors.ListedColormap(['white', 'red', 'green', 'orange'])
 bounds = [0,0.9, 5, 10, 20]
 norm = colors.BoundaryNorm(bounds, cmap.N)
@@ -247,7 +235,7 @@ norm = colors.BoundaryNorm(bounds, cmap.N)
 fig, ax = plt.subplots(figsize=(8,9))
 ax.imshow(data, cmap=cmap, norm=norm)
 
-# draw gridlines
+# kareler arasında siyah cizgiler cizilir
 ax.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
 ax.set_xticks(np.arange(-.5, len(maze), 1));
 ax.set_yticks(np.arange(-.5, len(maze), 1));
