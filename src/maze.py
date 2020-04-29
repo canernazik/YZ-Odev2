@@ -43,8 +43,6 @@ class Maze:
             x, y = self.__generate_starting_point(direction)
             can_place_obstacle = self.__validate_obstacle_position(x, y, direction, obstacle_length)
         
-        print("Direction: " + direction)
-        
         if direction == 'x':
             for j in range(y, y + obstacle_length):
                 self.__matrix[x][j] = 1
@@ -100,13 +98,11 @@ class Maze:
         return self.__matrix
 
 
-
-
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import numpy as np
 
-"""maze = Maze(20, 100, 100)
+maze = Maze(20, 100, 100)
 
 maze.print_matrix()
 matrix = maze.get_matrix()
@@ -129,6 +125,5 @@ ax.set_yticks(np.arange(-.5, len(matrix), 1));
 plt.setp(ax.get_xticklabels(), visible=False)
 plt.setp(ax.get_yticklabels(), visible=False)
 
-plt.show() """
-   
+plt.show()
      
